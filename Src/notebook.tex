@@ -522,9 +522,9 @@ including:
 \item
   T normal
 \item
-  granulocytes normal
+  Granulocytes normal
 \item
-  monocytes normal
+  Monocytes normal
 \item
   CD34+ normal
 \end{itemize}
@@ -711,7 +711,7 @@ The first dimension reduction method that we're going to use is the
 is used to extract the important information from a multivariate data
 table and to express this information as a set of few new variables
 called principal components. PCA assumes that the directions with the
-largest variances are the most \textbf{important} and the amount of
+largest variances are the most \textbf{important} while the amount of
 variance retained by each principal component is measured by the
 \textbf{eigenvalue}.\\
 We will use the \texttt{prcomp()} method to obtain the \emph{PCA} and
@@ -860,30 +860,33 @@ different sample groups and their correlation:
 (tSNE)}\label{t-distributed-stochastic-neighbor-embedding-tsne}}
 
 The next \emph{dimension reduction} algorithm that we're going to try is
-the tSNE which as mentioned in \hyperref[fig-1]{figure 1}, is a
-non-linear algorithm. Non-linearity means that it's capable of
+the \emph{tSNE} which as mentioned in \hyperref[fig-1]{figure 1}, is a
+\textbf{non-linear algorithm}. Non-linearity means that it's capable of
 separating data which can't be separated by a straight line, unlike the
 linear algorithms(e.g.~\emph{PCA}).
 
 We're going to use the \texttt{Rtsne()} method from the \texttt{Rtsne}
-package, to calculate the tSNE of our expression matrix. One parameter
-that we need to pass to the \texttt{Rtsne()} method is the
-\texttt{perplexity}. A perplexity is more or less a target number of
-neighbors for our central point. Basically, the higher the perplexity is
-the higher the variance value.\footnote{https://towardsdatascience.com/t-sne-clearly-explained-d84c537f53a}
+package, to calculate the \emph{tSNE} of our expression matrix. One
+parameter that we need to pass to the \texttt{Rtsne()} method is the
+\textbf{\texttt{perplexity}}. A perplexity is more or less a target
+number of neighbors for our central point. Basically, the higher the
+perplexity is, the higher the variance value.\footnote{https://towardsdatascience.com/t-sne-clearly-explained-d84c537f53a}
 
 So we will calculate the \emph{tSNE} for 3 \texttt{perplexity} values of
-\(5, 10\) and \(15\). After plotting the result, we can choose the best
-value based on how well it separated the group clusters:
+\(3, 5, 7, 10, 15\) and \(20\). After plotting the result, we can choose
+the best value based on how well it separated the group clusters:
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{14}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{tsne\PYZus{}results} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{list}\PY{p}{(}\PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{5}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
+\PY{n}{tsne\PYZus{}results} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{list}\PY{p}{(}\PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{3}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
+                     \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{5}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
+                     \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{7}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
                      \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{10}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
-                     \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{15}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{)}
+                     \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{15}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{,}
+                     \PY{n+nf}{Rtsne}\PY{p}{(}\PY{n+nf}{t}\PY{p}{(}\PY{n}{ex}\PY{p}{)}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m}{20}\PY{p}{,} \PY{n}{check\PYZus{}duplicates} \PY{o}{=} \PY{k+kc}{FALSE}\PY{p}{)}\PY{p}{)}
 
-\PY{n+nf}{options}\PY{p}{(}\PY{n}{repr.plot.width}\PY{o}{=}\PY{l+m}{16}\PY{p}{,} \PY{n}{repr.plot.height}\PY{o}{=}\PY{l+m}{10}\PY{p}{)}
+\PY{n+nf}{options}\PY{p}{(}\PY{n}{repr.plot.width}\PY{o}{=}\PY{l+m}{16}\PY{p}{,} \PY{n}{repr.plot.height}\PY{o}{=}\PY{l+m}{14}\PY{p}{)}
 \PY{n}{tsne.plots.list} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{list}\PY{p}{(}\PY{p}{)}
 
 \PY{n+nf}{for}\PY{p}{(}\PY{n}{i} \PY{n}{in} \PY{n+nf}{seq\PYZus{}along}\PY{p}{(}\PY{n}{tsne\PYZus{}results}\PY{p}{)}\PY{p}{)} \PY{p}{\PYZob{}}
@@ -892,10 +895,10 @@ value based on how well it separated the group clusters:
 \PY{p}{\PYZcb{}}
 \PY{n}{ggarr} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{ggarrange}\PY{p}{(}\PY{n}{plotlist} \PY{o}{=} \PY{n}{tsne.plots.list}\PY{p}{,} 
                    \PY{n}{ncol} \PY{o}{=} \PY{l+m}{2}\PY{p}{,} 
-                   \PY{n}{nrow} \PY{o}{=} \PY{l+m}{2}\PY{p}{,} 
-                   \PY{n}{labels} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{5}\PY{p}{,} \PY{l+m}{10}\PY{p}{,} \PY{l+m}{15}\PY{p}{)}\PY{p}{)}
+                   \PY{n}{nrow} \PY{o}{=} \PY{l+m}{3}\PY{p}{,}
+                  \PY{n}{labels} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{5}\PY{p}{,} \PY{l+m}{7}\PY{p}{,} \PY{l+m}{10}\PY{p}{,} \PY{l+m}{15}\PY{p}{,} \PY{l+m}{20}\PY{p}{)}\PY{p}{)}
 \PY{n+nf}{annotate\PYZus{}figure}\PY{p}{(}\PY{n}{ggarr}\PY{p}{,}
-               \PY{n}{bottom} \PY{o}{=} \PY{n+nf}{text\PYZus{}grob}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{tSNE with the perplexity=10 was more successful to separate the data points.\PYZdq{}}\PY{p}{,}
+               \PY{n}{bottom} \PY{o}{=} \PY{n+nf}{text\PYZus{}grob}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{tSNE with the perplexity around 5\PYZhy{}10 is sufficient.\PYZdq{}}\PY{p}{,}
                                   \PY{n}{hjust} \PY{o}{=} \PY{l+m}{1}\PY{p}{,}
                                   \PY{n}{x} \PY{o}{=} \PY{l+m}{1}\PY{p}{,}
                                   \PY{n}{face} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{italic\PYZdq{}}\PY{p}{,}
@@ -909,8 +912,11 @@ value based on how well it separated the group clusters:
     \end{center}
     { \hspace*{\fill} \\}
     
-    According to the plots, \emph{tSNE} with the \texttt{perplexity=10} was
-more successful to separate the data points.
+    According to the plots, \emph{tSNE} with the \texttt{perplexity} in a
+range \([5, 10]\) was almost successful to separate different groups of
+samples \textbf{except for the \emph{AML}, \emph{CD34+}, and
+\emph{Monocytes}} which brings this idea to mind that expressions in
+these groups were highly similar/correlated.
 \newpage
     \hypertarget{multidimensional-scaling-mds}{%
 \subsubsection{Multidimensional scaling
@@ -962,7 +968,7 @@ one more time to make it easier for comparing:
 \prompt{In}{incolor}{17}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n+nf}{options}\PY{p}{(}\PY{n}{repr.plot.width}\PY{o}{=}\PY{l+m}{16}\PY{p}{,} \PY{n}{repr.plot.height}\PY{o}{=}\PY{l+m}{10}\PY{p}{)}
-\PY{n+nf}{ggarrange}\PY{p}{(}\PY{n}{pca.plot1}\PY{p}{,} \PY{n}{tsne.plots.list}\PY{p}{[[}\PY{l+m}{2}\PY{p}{]]}\PY{p}{,} \PY{n}{mds.plot}\PY{p}{,}
+\PY{n+nf}{ggarrange}\PY{p}{(}\PY{n}{pca.plot1}\PY{p}{,} \PY{n}{tsne.plots.list}\PY{p}{[[}\PY{l+m}{4}\PY{p}{]]}\PY{p}{,} \PY{n}{mds.plot}\PY{p}{,}
           \PY{n}{ncol} \PY{o}{=} \PY{l+m}{2}\PY{p}{,}
           \PY{n}{nrow} \PY{o}{=} \PY{l+m}{2}\PY{p}{,}
           \PY{n}{labels} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZsq{}}\PY{l+s}{PCA\PYZsq{}}\PY{p}{,} \PY{l+s}{\PYZsq{}}\PY{l+s}{tSNE\PYZsq{}}\PY{p}{,} \PY{l+s}{\PYZsq{}}\PY{l+s}{MDS\PYZsq{}}\PY{p}{)}\PY{p}{)}
@@ -974,7 +980,7 @@ one more time to make it easier for comparing:
     \end{center}
     { \hspace*{\fill} \\}
     
-    According to plots, we believe that the \texttt{tSNE} was able to
+    According to plots, we believe that the \textbf{\emph{tSNE}} was able to
 separate groups of samples more precisely.
 \newpage
     \hypertarget{correlation-between-samples}{%
@@ -983,13 +989,14 @@ samples}\label{correlation-between-samples}}
 
 Heat map shows correlations between different samples. For example each
 group has high corealation with itself that is determined by red color
-or granulocytes have a low correlation with B-cells and T-cells that is
-determined by blue color.
+or \emph{Granulocytes} have a low correlation with \emph{B-cells} and
+\emph{T-cells} which is determined by blue color.
 
-According to the heatmap, AML has a high correlation with CD34 and
-Monocytes which makes them proper candidates to check whether there are
-any significant expression differences between their genes and the AML
-ones.
+According to the heatmap, \textbf{\emph{AML}} has a high correlation
+with \textbf{\emph{CD34+}} and \textbf{\emph{Monocytes}} which makes
+these 2 groups, proper candidates to check whether there are any
+significant expression differences between their genes and the
+\emph{AML} ones.
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{18}{\boxspacing}
@@ -1013,21 +1020,38 @@ ones.
 \begin{itemize}
 \tightlist
 \item
-  https://www.digitalocean.com/community/tutorials/normalize-data-in-r
+  \href{https://maktabkhooneh.org/course/\%D8\%A8\%DB\%8C\%D9\%88\%D8\%A7\%D9\%86\%D9\%81\%D9\%88\%D8\%B1\%D9\%85\%D8\%A7\%D8\%AA\%DB\%8C\%DA\%A9-\%D9\%BE\%DB\%8C\%D8\%B4\%D8\%B1\%D9\%81\%D8\%AA\%D9\%87-mk375/\#seasons}{https://maktabkhooneh.org
+  - Advanced Bioinformatics course}
 \item
-  https://www.v7labs.com/blog/data-preprocessing-guide
+  \href{https://www.nature.com/scitable/definition/microarray-202/}{https://www.nature.com
+  - microarray}
 \item
-  https://machinelearningmastery.com/dimensionality-reduction-for-machine-learning/
+  \href{https://www.digitalocean.com/community/tutorials/normalize-data-in-r}{https://www.digitalocean.com
+  - How to Normalize data in R}
 \item
-  https://towardsdatascience.com/11-dimensionality-reduction-techniques-you-should-know-in-2021-dcb9500d388b
+  \href{https://www.v7labs.com/blog/data-preprocessing-guide}{https://www.v7labs.com
+  - A Simple Guide to Data Preprocessing in Machine Learning}
 \item
-  http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/118-principal-component-analysis-in-r-prcomp-vs-princomp/
+  \href{https://machinelearningmastery.com/dimensionality-reduction-for-machine-learning/}{https://machinelearningmastery.com
+  - Introduction to Dimensionality Reduction for Machine Learning}
 \item
-  http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/
+  \href{https://towardsdatascience.com/11-dimensionality-reduction-techniques-you-should-know-in-2021-dcb9500d388b}{https://towardsdatascience.com
+  - 11 Dimensionality reduction techniques you should know in 2021}
 \item
-  https://ajitjohnson.com/tsne-for-biologist-tutorial/
+  \href{http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/118-principal-component-analysis-in-r-prcomp-vs-princomp/}{http://www.sthda.com
+  - Principal Component Analysis in R: prcomp vs princomp}
 \item
-  https://towardsdatascience.com/t-sne-clearly-explained-d84c537f53a
+  \href{http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/}{http://www.sthda.com
+  - Principal Component Analysis Essentials}
+\item
+  \href{https://ajitjohnson.com/tsne-for-biologist-tutorial/}{https://ajitjohnson.com
+  - Getting started with t-SNE for biologist (R)}
+\item
+  \href{https://towardsdatascience.com/t-sne-clearly-explained-d84c537f53a}{https://towardsdatascience.com
+  - t-SNE clearly explained}
+\item
+  \href{http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/122-multidimensional-scaling-essentials-algorithms-and-r-code/}{http://www.sthda.com
+  - Multidimensional Scaling Essentials: Algorithms and R Code}
 \end{itemize}
 
 
