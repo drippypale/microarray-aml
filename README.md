@@ -56,12 +56,7 @@ dim(gset)
 ```
 
 
-<style>
-.dl-inline {width: auto; margin:0; padding: 0}
-.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
-.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
-.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>Features</dt><dd>32321</dd><dt>Samples</dt><dd>170</dd></dl>
+<dl><dt>Features</dt><dd>32321</dd><dt>Samples</dt><dd>170</dd></dl>
 
 
 
@@ -162,12 +157,7 @@ dim(gset)
 ```
 
 
-<style>
-.dl-inline {width: auto; margin:0; padding: 0}
-.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
-.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
-.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>Features</dt><dd>32321</dd><dt>Samples</dt><dd>67</dd></dl>
+<dl><dt>Features</dt><dd>32321</dd><dt>Samples</dt><dd>67</dd></dl>
 
 
 
@@ -183,22 +173,15 @@ but **How exactly is this *dimensionality reduction* going to help us?**
 3. Imagine you want to **visualize** this $323321$-dimentional data! It's not that practical, is it?  
 But when you reduce the dimensionality of higher dimension data to $2$ or $3$ components, it can easily be plotted on a $2D$ or $3D$ plot.  
 
-4. **multicollinearity**  
+1. **multicollinearity**  
 It occurs when features are highly correlated with one or more of the other features in the dataset and affect the performance of regression and classification models. *Dimensionality reduction* takes advantage of multicollinearity and combines the highly correlated variables into a set of uncorrelated variables.  
 
-5. When you keep the essential features and remove the others, the data **noise** is more likely to be removed, leading to higher model accuracy.   
+1. When you keep the essential features and remove the others, the data **noise** is more likely to be removed, leading to higher model accuracy.   
 
 
 You can see different methods of *dimensionality reduction* in the diagram below:
 ![drpng](notebook_files/DR.png)
-<style>
-    img[alt=drpng] {
-        width: 60%;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>
+
 ### Principal Component Analysis (PCA)
 The first dimension reduction method that we're going to use is the *Principal Component Analysis (PCA)*. Principal component analysis is used to extract the important information from a multivariate data table and to express this information as a set of few new variables called principal components. PCA assumes that the directions with the largest variances are the most **important** while the amount of variance retained by each principal component is measured by the **eigenvalue**.   
 We will use the `prcomp()` method to obtain the *PCA* and then plot it:
@@ -401,14 +384,6 @@ mds.plot
 
     
 ![mdspng](notebook_files/notebook_49_0.png)
-<style>
-    img[alt=mdspng] {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>
-    
 
 
 ### PCA vs. tSNE vs. MDS
@@ -448,14 +423,6 @@ pheatmap(cor(ex),
 
     
 ![corheatpng](notebook_files/notebook_56_0.png)
-<style>
-    img[alt=corheatpng] {
-        width: 50%;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>
     
 
 
