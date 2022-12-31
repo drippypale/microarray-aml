@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-
+    \usepackage{subcaption}
     \usepackage[breakable]{tcolorbox}
     \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
     
@@ -13,8 +13,8 @@
     % proper Figure object with a Caption API and a way to capture that
     % in the conversion process - todo).
     \usepackage{caption}
-    \DeclareCaptionFormat{nocaption}{}
-    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+    % \DeclareCaptionFormat{nocaption}{}
+    % \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
 
     \usepackage{float}
     \floatplacement{figure}{H} % forces figures to be placed at the correct location
@@ -168,11 +168,8 @@
     Microarray Gene Expression Analysis\\
     \large Acute myeloid leukemia (AML)
     }
-    
-    
-    
     \author{Saman Dehestani \thanks{401208226} \and Sajede Fadaei \thanks{400211513} \and Aminreza Sefid \thanks{401208204}}
-    
+
     
     
     
@@ -464,7 +461,7 @@ and then parse it to the \texttt{R} structure obtaining the
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{2}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{gset} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{getGEO}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{GSE48558\PYZdq{}}\PY{p}{,} \PY{n}{GSEMatrix} \PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{getGPL}\PY{o}{=}\PY{n+nb+bp}{T}\PY{p}{,} \PY{n}{destdir}\PY{o}{=}\PY{l+s}{\PYZsq{}}\PY{l+s}{../Data/\PYZsq{}}\PY{p}{)}
+\PY{n}{gset} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{getGEO}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{GSE48558\PYZdq{}}\PY{p}{,} \PY{n}{GSEMatrix} \PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{,} \PY{n}{getGPL}\PY{o}{=}\PY{n+nb+bp}{T}\PY{p}{,} \PY{n}{destdir}\PY{o}{=}\PY{l+s}{\PYZsq{}}\PY{l+s}{../Data/\PYZsq{}} \PY{p}{,} \PY{n}{AnnotGPL} \PY{o}{=} \PY{k+kc}{TRUE}\PY{p}{)}
 \PY{n}{gset} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{gset}\PY{p}{[[}\PY{l+m}{1}\PY{p}{]]}
 \end{Verbatim}
 \end{tcolorbox}
@@ -477,7 +474,7 @@ GSE48558\_series\_matrix.txt.gz
 Using locally cached version: ../Data//GSE48558\_series\_matrix.txt.gz
 
 Using locally cached version of GPL6244 found here:
-../Data//GPL6244.soft.gz
+../Data//GPL6244.annot.gz
 
     \end{Verbatim}
 
@@ -698,9 +695,9 @@ You can see different methods of \emph{dimensionality reduction} in the
 diagram below:
 \begin{figure}[!hbt]
     \centering
-    \includegraphics[scale=0.75]{DR.png}
-    \caption{Fig1: Dimensionality Reduction methods}
-    \label{fig-1}
+    \includegraphics[scale=0.65]{figs/DR.png}
+    \caption{Dimensionality Reduction methods}
+    \label{fig:dim-reduction}
 \end{figure}\newpage
     \hypertarget{principal-component-analysis-pca}{%
 \subsubsection{Principal Component Analysis
@@ -1014,6 +1011,380 @@ significant expression differences between their genes and the
     \end{center}
     { \hspace*{\fill} \\}
     
+    \hypertarget{differential-expression-analysis}{%
+\section{Differential expression
+analysis}\label{differential-expression-analysis}}
+
+    \hypertarget{fitting-a-linear-model-to-the-data}{%
+\subsection{Fitting a linear model to the
+data}\label{fitting-a-linear-model-to-the-data}}
+
+creating a \emph{design matrix} which simply demonstrates which group,
+each sample belongs to:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{design} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{model.matrix}\PY{p}{(}\PY{o}{\PYZti{}} \PY{n}{group} \PY{o}{+} \PY{l+m}{0}\PY{p}{,} \PY{n}{gset}\PY{p}{)}
+\PY{n+nf}{colnames}\PY{p}{(}\PY{n}{design}\PY{p}{)} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{levels}\PY{p}{(}\PY{n}{gs}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{head}\PY{p}{(}\PY{n}{design}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 6 × 6 of type dbl
+\begin{tabular}{r|llllll}
+  & AML & Granulocytes & B.Cells & T.Cells & Monocytes & CD34\\
+\hline
+	GSM1180750 & 1 & 0 & 0 & 0 & 0 & 0\\
+	GSM1180751 & 1 & 0 & 0 & 0 & 0 & 0\\
+	GSM1180752 & 1 & 0 & 0 & 0 & 0 & 0\\
+	GSM1180753 & 1 & 0 & 0 & 0 & 0 & 0\\
+	GSM1180754 & 1 & 0 & 0 & 0 & 0 & 0\\
+	GSM1180755 & 1 & 0 & 0 & 0 & 0 & 0\\
+\end{tabular}
+
+
+    
+    Now we try to fit a simple linear model to the gene expressions:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fit} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{lmFit}\PY{p}{(}\PY{n}{gset}\PY{p}{,} \PY{n}{design}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Comparisons between groups(log fold-changes) are obtained as contrasts
+of these fitted linear models. Here we choose the \textbf{\emph{AML}}
+and the \textbf{\emph{CD34}} groups to compare:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{cont.matrix} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{makeContrasts}\PY{p}{(}\PY{n}{AML}\PY{o}{\PYZhy{}}\PY{n}{CD34}\PY{p}{,} \PY{n}{levels}\PY{o}{=}\PY{n}{design}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    now we use the \texttt{contrasts.fit()} to compute estimated
+coefficients and standard errors for the \textbf{\emph{AML-CD34}}
+contrasts. It actually estimates contrast for each gene:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fit2} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{contrasts.fit}\PY{p}{(}\PY{n}{fit}\PY{p}{,} \PY{n}{cont.matrix}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Empirical Bayes smoothing of standard errors(shrinks standard errors
+that are much larger or smaller than those from other genes towards the
+average standard error):
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fit2} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{eBayes}\PY{p}{(}\PY{n}{fit2}\PY{p}{,} \PY{l+m}{0.01}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+\newpage
+    \hypertarget{top-ranked-genes}{%
+\subsection{Top-ranked genes}\label{top-ranked-genes}}
+
+Now we will extract a table of the top-ranked genes from our linear
+model \texttt{fit2}:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{tT} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{topTable}\PY{p}{(}\PY{n}{fit2}\PY{p}{,} \PY{n}{adjust}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{fdr\PYZdq{}}\PY{p}{,} \PY{n}{sort.by}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{B\PYZdq{}}\PY{p}{,} \PY{n}{number}\PY{o}{=}\PY{k+kc}{Inf}\PY{p}{)}
+\PY{n}{tT} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{subset}\PY{p}{(}\PY{n}{tT}\PY{p}{,} \PY{n}{select}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Gene.symbol\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{Gene.ID\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{adj.P.Val\PYZdq{}}\PY{p}{,}\PY{l+s}{\PYZdq{}}\PY{l+s}{logFC\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    As you can see below, \texttt{tT} consists of \(32321\) genes in the
+rows and the columns are \emph{Gene.symbol}, \emph{Gene.ID},
+\emph{adj.P.Val} and \emph{logFC}. Genes are sorted according to the
+\textbf{\emph{B}} values by passing the \texttt{sort.by="B"} argument to
+the \texttt{topTable()} mathod:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{print}\PY{p}{(}\PY{n+nf}{dim}\PY{p}{(}\PY{n}{tT}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{head}\PY{p}{(}\PY{n}{tT}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[1] 32321     4
+    \end{Verbatim}
+
+    A data.frame: 6 × 4
+\begin{tabular}{r|llll}
+  & Gene.symbol & Gene.ID & adj.P.Val & logFC\\
+  & <chr> & <chr> & <dbl> & <dbl>\\
+\hline
+	8160088 & MPDZ   & 8777   & 2.565924e-36 & -3.670064\\
+	8101284 & PRKG2  & 5593   & 5.887234e-30 & -5.874765\\
+	7910915 & CHRM3  & 1131   & 3.200429e-28 & -4.378570\\
+	8160168 & FREM1  & 158326 & 1.119567e-23 & -3.409825\\
+	8121814 & NKAIN2 & 154215 & 5.166675e-23 & -4.673490\\
+	8008588 & HLF    & 3131   & 2.786807e-20 & -4.140364\\
+\end{tabular}
+
+
+    
+    We can save the resulting differential expression matrix in a file:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{write.table}\PY{p}{(}\PY{n}{tT}\PY{p}{,}
+            \PY{n}{file}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{../Results/AML\PYZus{}CD34.txt\PYZdq{}}\PY{p}{,}
+            \PY{n}{row.names}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}
+            \PY{n}{sep}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{\PYZbs{}t\PYZdq{}}\PY{p}{,}
+            \PY{n}{quote}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+\newpage
+    \hypertarget{aml-up-genes}{%
+\subsubsection{AML up genes}\label{aml-up-genes}}
+
+Now it's the time to achieve a list of \textbf{\emph{AML-CD34}} genes
+which highly expressed in the case of AML patients:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{aml.up} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{subset}\PY{p}{(}\PY{n}{tT}\PY{p}{,} \PY{n}{logFC} \PY{o}{\PYZgt{}} \PY{l+m}{1} \PY{o}{\PYZam{}} \PY{n}{adj.P.Val} \PY{o}{\PYZlt{}} \PY{l+m}{0.05}\PY{p}{)}
+\PY{n}{aml.up.genes} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{unique}\PY{p}{(}\PY{n+nf}{as.character}\PY{p}{(}\PY{n+nf}{strsplit2}\PY{p}{(}\PY{n}{aml.up}\PY{o}{\PYZdl{}}\PY{n}{Gene.symbol}\PY{p}{,} \PY{l+s}{\PYZsq{}}\PY{l+s}{///\PYZsq{}}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nf}{write.table}\PY{p}{(}\PY{n}{aml.up.genes}\PY{p}{,}
+            \PY{n}{file}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{../Results/AML\PYZus{}CD34\PYZus{}Up.txt\PYZdq{}}\PY{p}{,}
+            \PY{n}{quote}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}
+            \PY{n}{col.names}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}
+            \PY{n}{row.names}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{head}\PY{p}{(}\PY{n+nf}{unique}\PY{p}{(}\PY{n}{aml.up}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 6 × 4
+\begin{tabular}{r|llll}
+  & Gene.symbol & Gene.ID & adj.P.Val & logFC\\
+  & <chr> & <chr> & <dbl> & <dbl>\\
+\hline
+	8111739 & FYB         & 2533            & 7.381406e-13 & 4.382383\\
+	8080487 & PRKCD       & 5580            & 1.411050e-12 & 2.972528\\
+	8034420 & MAN2B1      & 4125            & 2.608491e-09 & 1.932052\\
+	7973108 & ECRP///ECRP & 643332///643332 & 1.590050e-08 & 4.248503\\
+	7907830 & QSOX1       & 5768            & 1.749850e-08 & 2.173438\\
+	7970162 & ATP11A      & 23250           & 2.212408e-08 & 2.026483\\
+\end{tabular}
+
+
+    
+    \hypertarget{aml-down-genes}{%
+\subsubsection{AML down genes}\label{aml-down-genes}}
+
+Then also a list of \textbf{\emph{AML-CD34}} genes which had a
+low-expression:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{aml.down} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{subset}\PY{p}{(}\PY{n}{tT}\PY{p}{,} \PY{n}{logFC} \PY{o}{\PYZlt{}} \PY{l+m}{\PYZhy{}1} \PY{o}{\PYZam{}} \PY{n}{adj.P.Val} \PY{o}{\PYZlt{}} \PY{l+m}{0.05}\PY{p}{)}
+\PY{n}{aml.down.genes} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{unique}\PY{p}{(}\PY{n+nf}{as.character}\PY{p}{(}\PY{n+nf}{strsplit2}\PY{p}{(}\PY{n}{aml.down}\PY{o}{\PYZdl{}}\PY{n}{Gene.symbol}\PY{p}{,} \PY{l+s}{\PYZsq{}}\PY{l+s}{///\PYZsq{}}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nf}{write.table}\PY{p}{(}\PY{n}{aml.down.genes}\PY{p}{,}
+            \PY{n}{file}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{../Results/AML\PYZus{}CD34\PYZus{}Down.txt\PYZdq{}}\PY{p}{,}
+            \PY{n}{quote}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}
+            \PY{n}{col.names}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}
+            \PY{n}{row.names}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{head}\PY{p}{(}\PY{n+nf}{unique}\PY{p}{(}\PY{n}{aml.down}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A data.frame: 6 × 4
+\begin{tabular}{r|llll}
+  & Gene.symbol & Gene.ID & adj.P.Val & logFC\\
+  & <chr> & <chr> & <dbl> & <dbl>\\
+\hline
+	8160088 & MPDZ   & 8777   & 2.565924e-36 & -3.670064\\
+	8101284 & PRKG2  & 5593   & 5.887234e-30 & -5.874765\\
+	7910915 & CHRM3  & 1131   & 3.200429e-28 & -4.378570\\
+	8160168 & FREM1  & 158326 & 1.119567e-23 & -3.409825\\
+	8121814 & NKAIN2 & 154215 & 5.166675e-23 & -4.673490\\
+	8008588 & HLF    & 3131   & 2.786807e-20 & -4.140364\\
+\end{tabular}
+
+
+    \newpage
+    \hypertarget{transcription-analysis}{%
+\subsection{Transcription Analysis}\label{transcription-analysis}}
+\begin{figure}
+  \begin{center}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, right}{figs/ChEA_2022_bar_graph.png}
+          \caption{ChEA 2022}\label{fig:chea-2022}
+      \end{subfigure}%
+      \hspace*{.1in}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, left}{figs/ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X_bar_graph.png}
+          \caption{ENCODE and ChEA Consensus TFs from ChIP-X}\label{fig:encode-chea}
+      \end{subfigure}
+  \end{center}
+\end{figure}
+    \hypertarget{pathway-analysis}{%
+\subsection{Pathway Analysis}\label{pathway-analysis}}
+\begin{figure}
+  \begin{center}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, right}{figs/Reactome_2022_bar_graph.png}
+          \caption{Reactome 2022}\label{fig:reactome-2022}
+      \end{subfigure}%
+      \hspace*{.1in}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, left}{figs/KEGG_2021_Human_bar_graph.png}
+          \caption{KEGG 2021}\label{fig:KEGG-2021}
+      \end{subfigure}
+      \hfill
+  \end{center}
+  \begin{subfigure}{.5\textwidth}
+    \adjustimage{width=1\linewidth, left}{figs/WikiPathway_2021_Human_bar_graph.png}
+    \caption{WikiPathway 2021}\label{fig:wikipathway-2021}
+  \end{subfigure}
+  \hspace*{.1in}
+  \begin{subfigure}{.5\textwidth}
+  \end{subfigure}
+\end{figure}
+    \hypertarget{gene-ontology-analysis}{%
+\subsection{Gene Ontology Analysis}\label{gene-ontology-analysis}}
+\begin{figure}
+  \begin{center}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, right}{figs/GO_Biological_Process_2021_bar_graph.png}
+          \caption{GO Biological Process 2021}\label{fig:go-bio-pro-2021}
+      \end{subfigure}%
+      \hspace*{.1in}
+      \begin{subfigure}{.5\textwidth}
+          \adjustimage{width=1\linewidth, left}{figs/GO_Cellular_Component_2021_bar_graph.png}
+          \caption{GO Cellular Component 2021}\label{fig:go-cell-comp-2021}
+      \end{subfigure}
+      \hfill
+  \end{center}
+  \begin{subfigure}{.5\textwidth}
+    \adjustimage{width=1\linewidth, left}{figs/GO_Molecular_Function_2021_bar_graph.png}
+    \caption{GO Molecular Function 2021}\label{fig:go-mol-func-2021}
+  \end{subfigure}
+  \hspace*{.1in}
+  \begin{subfigure}{.5\textwidth}
+  \end{subfigure}
+\end{figure}
+    \hypertarget{validation}{%
+\subsection{Validation}\label{validation}}
+
+To validate our results, we will demonstrate some prior researches which
+can confirm our results.
+
+    \hypertarget{foxm1}{%
+\subsubsection{FOXM1}\label{foxm1}}
+
+FOXM1, a known transcription factor, promotes cell proliferation in a
+variety of cancer cells. our study shows a critical role and mechanisms
+of Foxm1 in MA9-LSCs, and indicates that FOXM1 is a potential
+therapeutic target for selectively eliminating LSCs in MLL-rearranged
+AML.\footnote{\href{https://www.nature.com/articles/s41467-020-14590-9}{FOXM1
+  regulates leukemia stem cell quiescence and survival in MLL-rearranged
+  AML}}
+
+    \hypertarget{e2f4}{%
+\subsubsection{E2F4}\label{e2f4}}
+
+the experimental results showed that E2F4 was aberrantly overexpressed
+in human AML patients and cell lines. Depletion of E2F4 inhibited the
+proliferation, induced the differentiation and suppressed the growth of
+AML cells in a nude mouse model. By contrast, overexpression of E2F4
+promoted the proliferation and inhibited the differentiation of AML
+cells in vitro.\footnote{\href{https://pubmed.ncbi.nlm.nih.gov/31943751/}{E2F4
+  functions as a tumour suppressor in acute myeloid leukaemia via
+  inhibition of the MAPK signalling pathway by binding to EZH2}}
+
+    \hypertarget{t-cell-receptor}{%
+\subsubsection{T Cell Receptor}\label{t-cell-receptor}}
+
+In vitro studies show that coculture with AML cells and incubations with
+AML plasma inhibit the proliferation of T cells. One proven mechanism of
+T cell growth inhibition is the expression of AML surface receptors that
+interact with T cells and alter their function. This includes leukocyte
+immunoglobulin-like receptor B4 (LILRB4), an inhibitory immune
+checkpoint receptor restrictively expressed on monocytic leukemic cells
+(M4 and M5 subtypes).\footnote{\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8699747/}{The
+  Role of T Cell Immunotherapy in Acute Myeloid Leukemia}}
+
+    \hypertarget{phagosome}{%
+\subsubsection{Phagosome}\label{phagosome}}
+
+It is reported that phagosome pathway is the most optimal and common in
+both Kasumi-1 and MV4-11 AML cell lines induced by differentiation
+inducers, Trichostatin A and 5-Azacytidine (Asmaa et al.,
+2020)\footnote{\href{https://www.frontiersin.org/articles/10.3389/fcell.2021.652972/full}{OGP46
+  Induces Differentiation of Acute Myeloid Leukemia Cells via Different
+  Optimal Signaling Pathways}}
+\begin{figure}
+        \begin{center}
+            \includegraphics[width=\linewidth]{figs/ko04145.png}
+            \caption{KEGG 2022 Phagosome\textsuperscript{*}}
+            \tiny\textsuperscript{*} \url{https://www.genome.jp/kegg-bin/show_pathway?ko04145}
+            \label{fig:kegg-2022-phagosome}
+        \end{center}
+\end{figure}
+    \hypertarget{related-drugs}{%
+\subsection{Related Drugs}\label{related-drugs}}
+
+\hypertarget{quizartinib-and-crenolanib-flt3-inhibitors}{%
+\subsubsection{Quizartinib and Crenolanib: FLT3
+Inhibitors}\label{quizartinib-and-crenolanib-flt3-inhibitors}}
+
+Mutations in the FLT3 gene occur in approximately one third of all
+patients with newly diagnosed AML; 20\% to 25\% of these mutations are
+ITD and 5\% to 10\% are point mutations of the tyrosine kinase domain.
+Both types of mutations lead to constitutive activation of the FLT3
+receptor tyrosine kinase, promoting cellular proliferation and survival
+and inhibiting differentiation.\footnote{\href{https://aacrjournals.org/cancerdiscovery/article/10/4/506/2495/Advances-in-the-Treatment-of-Acute-Myeloid}{Advances
+  in the Treatment of Acute Myeloid Leukemia: New Drugs and New
+  Challenges}}
+
+\hypertarget{venetoclax-bcl-2-inhibitors}{%
+\subsubsection{Venetoclax: BCL-2
+inhibitors}\label{venetoclax-bcl-2-inhibitors}}
+
+Antiapoptotic proteins, including BCL2, BCL-XL, and MCL1, are frequently
+overexpressed in AML and are associated with resistance to chemotherapy
+(82). This observation led to the development of BH3 mimetics that
+structurally mimic BH3-only proteins and are capable of binding to
+antiapoptotic proteins, effectively inhibiting their functional activity
+and inducing apoptosis.\footnote{\href{https://aacrjournals.org/cancerdiscovery/article/10/4/506/2495/Advances-in-the-Treatment-of-Acute-Myeloid}{Advances
+  in the Treatment of Acute Myeloid Leukemia: New Drugs and New
+  Challenges}}
+\newpage
     \hypertarget{references}{%
 \section{References}\label{references}}
 
@@ -1052,6 +1423,27 @@ significant expression differences between their genes and the
 \item
   \href{http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/122-multidimensional-scaling-essentials-algorithms-and-r-code/}{http://www.sthda.com
   - Multidimensional Scaling Essentials: Algorithms and R Code}
+\item
+  \href{https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/thursday/DE.html}{https://ucdavis-bioinformatics-training.github.io/}
+\item
+  \href{https://www.nature.com/articles/s41467-020-14590-9}{FOXM1
+  regulates leukemia stem cell quiescence and survival in MLL-rearranged
+  AML}
+\item
+  \href{https://pubmed.ncbi.nlm.nih.gov/31943751/}{E2F4 functions as a
+  tumour suppressor in acute myeloid leukaemia via inhibition of the
+  MAPK signalling pathway by binding to EZH2}
+\item
+  \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8699747/}{The Role
+  of T Cell Immunotherapy in Acute Myeloid Leukemia}
+\item
+  \href{https://www.frontiersin.org/articles/10.3389/fcell.2021.652972/full}{OGP46
+  Induces Differentiation of Acute Myeloid Leukemia Cells via Different
+  Optimal Signaling Pathways}
+\item
+  \href{https://aacrjournals.org/cancerdiscovery/article/10/4/506/2495/Advances-in-the-Treatment-of-Acute-Myeloid}{Advances
+  in the Treatment of Acute Myeloid Leukemia: New Drugs and New
+  Challenges}
 \end{itemize}
 
 
